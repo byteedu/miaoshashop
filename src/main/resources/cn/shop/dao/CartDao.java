@@ -12,4 +12,5 @@ public interface CartDao {
     int updateByPrimaryKeySelective(Cart record);
     Cart selectCartByUserIdGoodsId(@Param("userId") Integer userId, @Param("goodsId")Integer goodsId);
     List<Cart> selectCartByUserId(Integer userId);
+    List<Cart> selectCart();
 }

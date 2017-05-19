@@ -8,20 +8,11 @@ import cn.shop.util.ServerResponse;
  */
 public interface IGoodsService {
 
-    ServerResponse saveOrUpdateGoods(Goods product);
+    ServerResponse saveOrUpdateGoods(Goods goods);
 
-    ServerResponse<String> setSaleStatus(Integer productId,Integer status);
+    ServerResponse<Goods> getGoodsList(int categoryId);
 
-    ServerResponse<Goods> manageGoodsDetail(Integer productId);
-
-    ServerResponse<Goods> getGoodsList(int pageNum, int pageSize);
-
-    ServerResponse<Goods> searchGoods(String productName,Integer productId,int pageNum,int pageSize);
-
-    ServerResponse<Goods> getGoodsDetail(Integer productId);
-
-    ServerResponse<Goods> getGoodsByKeywordCategory(String keyword,Integer categoryId,int pageNum,int pageSize,String orderBy);
-
+    ServerResponse<Goods> getGoodsDetail(Integer goodsId);
 
 
 }

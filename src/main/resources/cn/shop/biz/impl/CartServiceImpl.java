@@ -63,33 +63,58 @@ public class CartServiceImpl implements ICartService {
         return this.list(userId);
     }
 
+	@Override
+	public ServerResponse<Cart> deleteProduct(Integer userId, String productIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public ServerResponse<Cart> list (Integer userId){
-    	Cart cartVo = this.getCartLimit(userId);
-        return ServerResponse.createBySuccess(cartVo);
-    }
+	@Override
+	public ServerResponse<Cart> list(Integer userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    private Cart getCartLimit(Integer userId){
-        Cart cartVo = new Cart();
-        List<Cart> cartList = cartDao.selectCartByUserId(userId);
-        List<CartGoods> cartGoodsVoList = new ArrayList<CartGoods>();
+	@Override
+	public ServerResponse<Cart> selectOrUnSelect(Integer userId,
+			Integer productId, Integer checked) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        BigDecimal cartTotalPrice = new BigDecimal("0");
+	@Override
+	public ServerResponse<Integer> getCartProductCount(Integer userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        if(!cartGoodsVoList.isEmpty()){
-            for(Cart cartItem : cartList){
-                CartGoods cartGoodsVo = new CartGoods();
-                cartGoodsVo.setId(cartItem.getCartId());
-                cartGoodsVo.setUserId(userId);
-                cartGoodsVo.setGoodsId(cartItem.getCartGoodsId());
 
-                Goods goods = goodsDao.selectByPrimaryKey(cartItem.getCartGoodsId());
-                if(goods != null){
-                    cartGoodsVo.setGoodsPic(goods.getGoodsPic());
-                    cartGoodsVo.setGoodsName(goods.getGoodsName());
-                    cartGoodsVo.setGoodsDesc(goods.getGoodsDesc());
-                    cartGoodsVo.setGoodsPrice(goods.getGoodsPrice());
-                    cartGoodsVo.setGoodsResnum(goods.getGoodsResnum());
+//    public ServerResponse<Cart> list (Integer userId){
+//    	Cart cartVo = this.getCartLimit(userId);
+//        return ServerResponse.createBySuccess(cartVo);
+//    }
+
+//    private Cart getCartLimit(Integer userId){
+//        Cart cartVo = new Cart();
+//        List<Cart> cartList = cartDao.selectCartByUserId(userId);
+//        List<CartGoods> cartGoodsVoList = new ArrayList<CartGoods>();
+//
+//        BigDecimal cartTotalPrice = new BigDecimal("0");
+//
+//        if(!cartGoodsVoList.isEmpty()){
+//            for(Cart cartItem : cartList){
+//                CartGoods cartGoodsVo = new CartGoods();
+//                cartGoodsVo.setId(cartItem.getCartId());
+//                cartGoodsVo.setUserId(userId);
+//                cartGoodsVo.setGoodsId(cartItem.getCartGoodsId());
+//
+//                Goods goods = goodsDao.selectByPrimaryKey(cartItem.getCartGoodsId());
+//                if(goods != null){
+//                    cartGoodsVo.setGoodsPic(goods.getGoodsPic());
+//                    cartGoodsVo.setGoodsName(goods.getGoodsName());
+//                    cartGoodsVo.setGoodsDesc(goods.getGoodsDesc());
+//                    cartGoodsVo.setGoodsPrice(goods.getGoodsPrice());
+//                    cartGoodsVo.setGoodsResnum(goods.getGoodsResnum());
 //                    //判断库存
 //                    int buyLimitCount = 0;
 //                    if(goods.getGoodsResnum() >= cartItem.getCartQuantity()){
@@ -115,14 +140,13 @@ public class CartServiceImpl implements ICartService {
 //                    //如果已经勾选,增加到整个的购物车总价中
 //                    cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(),cartGoodsVo.getGoodsTotalPrice().doubleValue());
 //                }
-                cartGoodsVoList.add(cartGoodsVo);
-            }
-        }
+//                cartGoodsVoList.add(cartGoodsVo);
+//            }
+//        }
 //        cartVo.setCartTotalPrice(cartTotalPrice);
 //        cartVo.setCartGoodsVoList(cartGoodsVoList);
-
-        return cartVo;
-    }
-
+//
+//        return cartVo;
+//    }
 }
 
