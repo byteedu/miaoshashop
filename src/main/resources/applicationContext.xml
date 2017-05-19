@@ -18,16 +18,16 @@
 	
 	<!-- 配置dataSource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-		<property name="url" value="jdbc:oracle:thin:@localhost:1521:ORCL"></property>
-		<property name="username" value="scott"></property>
-		<property name="password" value="tiger"></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/db_miaosha?useUnicode=true&amp;characterEncoding=utf-8"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
 	</bean>
 	<!-- sessionFactory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
 		<property name="typeAliasesPackage" value="cn.shop.entity"></property>
-		<property name="mapperLocations" value="classpath:cn/bdqn/dao/*Mapper.xml"></property>
+		<property name="mapperLocations" value="classpath:cn/shop/dao/*Mapper.xml"></property>
 	</bean>
 	<!-- dao class统一使用.MapperFactoryBean,但是要注入接口的名称 -->
 	<!-- <bean id="informationsDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
