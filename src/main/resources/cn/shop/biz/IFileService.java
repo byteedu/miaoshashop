@@ -1,4 +1,4 @@
-package com.mmall.service;
+package cn.shop.biz;
 
 import org.springframework.web.multipart.MultipartFile;
 

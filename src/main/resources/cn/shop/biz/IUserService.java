@@ -1,7 +1,7 @@
-package com.mmall.service;
+package cn.shop.biz;
 
-import com.mmall.common.ServerResponse;
-import com.mmall.pojo.User;
+import cn.shop.entity.User;
+import cn.shop.util.ServerResponse;
 
 /**
  * Created by geely

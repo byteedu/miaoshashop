@@ -7,15 +7,15 @@ import cn.shop.biz.ICartService;
 import cn.shop.dao.CartDao;
 import cn.shop.dao.GoodsDao;
 import cn.shop.entity.Cart;
+import cn.shop.entity.CartGoods;
+import cn.shop.entity.Goods;
 import cn.shop.util.ResponseCode;
 import cn.shop.util.ServerResponse;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by geely
- */
 @Service("iCartService")
 public class CartServiceImpl implements ICartService {
 
@@ -28,7 +28,7 @@ public class CartServiceImpl implements ICartService {
         if(cartGoodsId == null || count == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
-        Cart cart = cartDao.selectCartByUserIdProductId(userId,cartGoodsId);
+        Cart cart = cartDao.selectCartByUserIdGoodsId(userId,cartGoodsId);
         if(cart == null){
             //这个产品不在这个购物车里,需要新增一个这个产品的记录
             Cart cartItem = new Cart();
@@ -46,20 +46,20 @@ public class CartServiceImpl implements ICartService {
         return this.list(userId);
     }
 
-    public ServerResponse<Cart> update(Integer userId,Integer productId,Integer count){
-        if(productId == null || count == null){
+    public ServerResponse<Cart> update(Integer userId,Integer goodsId,Integer count){
+        if(goodsId == null || count == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
-        Cart cart = cartDao.selectCartByUserIdProductId(userId,productId);
+        Cart cart = cartDao.selectCartByUserIdGoodsId(userId, goodsId);
         if(cart != null){
             cart.setCartQuantity(count);
         }
-        cartDao.updateByPrimaryKey(cart);
+        cartDao.updateByPrimaryKeySelective(cart);
         return this.list(userId);
     }
 
-    public ServerResponse<Cart> deleteProduct(Integer userId,String productId){
-        cartDao.deleteByUserIdProductIds(userId,productId);
+    public ServerResponse<Cart> deleteGoods(Integer userId,Integer goodsId){
+        cartDao.deleteByUserIdGoodsId(userId,goodsId);
         return this.list(userId);
     }
 
@@ -69,123 +69,60 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.createBySuccess(cartVo);
     }
 
-
-
-    public ServerResponse<Cart> selectOrUnSelect (Integer userId,Integer productId,Integer checked){
-        cartDao.checkedOrUncheckedProduct(userId,productId,checked);
-        return this.list(userId);
-    }
-
-    public ServerResponse<Integer> getCartProductCount(Integer userId){
-        if(userId == null){
-            return ServerResponse.createBySuccess(0);
-        }
-        return ServerResponse.createBySuccess(cartDao.selectCartProductCount(userId));
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private Cart getCartLimit(Integer userId){
         Cart cartVo = new Cart();
         List<Cart> cartList = cartDao.selectCartByUserId(userId);
-        List<CartProductVo> cartProductVoList = Lists.newArrayList();
+        List<CartGoods> cartGoodsVoList = new ArrayList<CartGoods>();
 
         BigDecimal cartTotalPrice = new BigDecimal("0");
 
-        if(CollectionUtils.isNotEmpty(cartList)){
+        if(!cartGoodsVoList.isEmpty()){
             for(Cart cartItem : cartList){
-                CartProductVo cartProductVo = new CartProductVo();
-                cartProductVo.setId(cartItem.getId());
-                cartProductVo.setUserId(userId);
-                cartProductVo.setProductId(cartItem.getProductId());
+                CartGoods cartGoodsVo = new CartGoods();
+                cartGoodsVo.setId(cartItem.getCartId());
+                cartGoodsVo.setUserId(userId);
+                cartGoodsVo.setGoodsId(cartItem.getCartGoodsId());
 
-                Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
-                if(product != null){
-                    cartProductVo.setProductMainImage(product.getMainImage());
-                    cartProductVo.setProductName(product.getName());
-                    cartProductVo.setProductSubtitle(product.getSubtitle());
-                    cartProductVo.setProductStatus(product.getStatus());
-                    cartProductVo.setProductPrice(product.getPrice());
-                    cartProductVo.setProductStock(product.getStock());
-                    //判断库存
-                    int buyLimitCount = 0;
-                    if(product.getStock() >= cartItem.getQuantity()){
-                        //库存充足的时候
-                        buyLimitCount = cartItem.getQuantity();
-                        cartProductVo.setLimitQuantity(Const.Cart.LIMIT_NUM_SUCCESS);
-                    }else{
-                        buyLimitCount = product.getStock();
-                        cartProductVo.setLimitQuantity(Const.Cart.LIMIT_NUM_FAIL);
-                        //购物车中更新有效库存
-                        Cart cartForQuantity = new Cart();
-                        cartForQuantity.setId(cartItem.getId());
-                        cartForQuantity.setQuantity(buyLimitCount);
-                        cartDao.updateByPrimaryKeySelective(cartForQuantity);
-                    }
-                    cartProductVo.setQuantity(buyLimitCount);
-                    //计算总价
-                    cartProductVo.setProductTotalPrice(BigDecimalUtil.mul(product.getPrice().doubleValue(),cartProductVo.getQuantity()));
-                    cartProductVo.setProductChecked(cartItem.getChecked());
-                }
-
-                if(cartItem.getChecked() == Const.Cart.CHECKED){
-                    //如果已经勾选,增加到整个的购物车总价中
-                    cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(),cartProductVo.getProductTotalPrice().doubleValue());
-                }
-                cartProductVoList.add(cartProductVo);
+                Goods goods = goodsDao.selectByPrimaryKey(cartItem.getCartGoodsId());
+                if(goods != null){
+                    cartGoodsVo.setGoodsPic(goods.getGoodsPic());
+                    cartGoodsVo.setGoodsName(goods.getGoodsName());
+                    cartGoodsVo.setGoodsDesc(goods.getGoodsDesc());
+                    cartGoodsVo.setGoodsPrice(goods.getGoodsPrice());
+                    cartGoodsVo.setGoodsResnum(goods.getGoodsResnum());
+//                    //判断库存
+//                    int buyLimitCount = 0;
+//                    if(goods.getGoodsResnum() >= cartItem.getCartQuantity()){
+//                        //库存充足的时候
+//                        buyLimitCount = cartItem.getQuantity();
+//                        cartGoodsVo.setLimitQuantity(Const.Cart.LIMIT_NUM_SUCCESS);
+//                    }else{
+//                        buyLimitCount = goods.getStock();
+//                        cartGoodsVo.setLimitQuantity(Const.Cart.LIMIT_NUM_FAIL);
+//                        //购物车中更新有效库存
+//                        Cart cartForQuantity = new Cart();
+//                        cartForQuantity.setId(cartItem.getId());
+//                        cartForQuantity.setQuantity(buyLimitCount);
+//                        cartDao.updateByPrimaryKeySelective(cartForQuantity);
+//                    }
+//                    cartGoodsVo.setQuantity(buyLimitCount);
+//                    //计算总价
+//                    cartGoodsVo.setGoodsTotalPrice(BigDecimalUtil.mul(goods.getPrice().doubleValue(),cartGoodsVo.getQuantity()));
+//                    cartGoodsVo.setGoodsChecked(cartItem.getChecked());
+//                }
+//
+//                if(cartItem.getChecked() == Const.Cart.CHECKED){
+//                    //如果已经勾选,增加到整个的购物车总价中
+//                    cartTotalPrice = BigDecimalUtil.add(cartTotalPrice.doubleValue(),cartGoodsVo.getGoodsTotalPrice().doubleValue());
+//                }
+                cartGoodsVoList.add(cartGoodsVo);
             }
         }
-        cartVo.setCartTotalPrice(cartTotalPrice);
-        cartVo.setCartProductVoList(cartProductVoList);
-        cartVo.setAllChecked(this.getAllCheckedStatus(userId));
-        cartVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix"));
+//        cartVo.setCartTotalPrice(cartTotalPrice);
+//        cartVo.setCartGoodsVoList(cartGoodsVoList);
 
         return cartVo;
     }
 
-    private boolean getAllCheckedStatus(Integer userId){
-        if(userId == null){
-            return false;
-        }
-        return cartDao.selectCartProductCheckedStatusByUserId(userId) == 0;
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
