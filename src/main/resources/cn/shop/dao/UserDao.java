@@ -5,13 +5,14 @@ import org.apache.ibatis.annotations.Param;
 import cn.shop.entity.User;
 
 public interface UserDao {
+	
+	int insert(User record);
+	
     int deleteByPrimaryKey(Integer id);
 
-    int insert(User record);
+    int updateByPrimaryKeySelective(User record);
 
     User selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(User record);
 
     User selectLogin(@Param("username") String username, @Param("password")String password);
 }
