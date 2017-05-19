@@ -9,7 +9,7 @@ public class OrderItem implements java.io.Serializable {
 	// Fields
 
 	private Integer orderItemId;
-	private Integer orderId;
+	private String orderNo;
 	private Integer goodsId;
 	private Integer goodsQuantity;
 
@@ -19,13 +19,7 @@ public class OrderItem implements java.io.Serializable {
 	public OrderItem() {
 	}
 
-	/** full constructor */
-	public OrderItem(Integer orderId, Integer goodsId, Integer goodsQuantity) {
-		this.orderId = orderId;
-		this.goodsId = goodsId;
-		this.goodsQuantity = goodsQuantity;
-	}
-
+	
 	// Property accessors
 
 	public Integer getOrderItemId() {
@@ -36,14 +30,7 @@ public class OrderItem implements java.io.Serializable {
 		this.orderItemId = orderItemId;
 	}
 
-	public Integer getOrderId() {
-		return this.orderId;
-	}
-
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
-	}
-
+	
 	public Integer getGoodsId() {
 		return this.goodsId;
 	}

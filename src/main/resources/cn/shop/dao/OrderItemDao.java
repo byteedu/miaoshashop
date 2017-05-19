@@ -11,18 +11,9 @@ public interface OrderItemDao {
 
     int insert(OrderItemDao record);
 
-    int insertSelective(OrderItemDao record);
-
-    OrderItem selectByPrimaryKey(Integer id);
-
     int updateByPrimaryKeySelective(OrderItem record);
 
-    int updateByPrimaryKey(OrderItem record);
-
-    List<OrderItem> getByOrderNoUserId(@Param("orderNo")Long orderNo, @Param("userId")Integer userId);
-
-    List<OrderItem> getByOrderNo(@Param("orderNo")Long orderNo);
-
+    List<OrderItem> getByOrderNo(@Param("orderNo")String orderNo);
 
     /**
      * 批量插入（划重点）
